@@ -1,0 +1,17 @@
+- name: Descriptive Service Name
+  hosts:
+    - tcp://docker1.example.com:2375
+  container:
+    name: running-container-name
+    image: private.registry.example.com/yourname/your_image
+    ports:
+      80/tcp: 8080
+
+- name: Descriptive Service Name 2
+  hosts:
+    - tcp://docker1.example.com:2375
+  container:
+    name: foobar-baz
+    image: private.registry.example.com/yourname/foobar_baz_image
+    ports:
+      999/tcp: 9999
