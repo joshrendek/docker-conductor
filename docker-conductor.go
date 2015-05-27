@@ -36,7 +36,9 @@ func main() {
 			docker_ctrl.PullImage(instr.Container.Image + ":latest")
 			container := docker_ctrl.FindContainer(instr.Container.Name)
 			fmt.Println("Container ID: " + container.ID())
-			docker_ctrl.RemoveContainer(container.ID())
+			if err := docker_ctrl.RemoveContainer(container.ID()); err != nil {
+				panic(err)
+			}
 			docker_ctrl.CreateAndStartContainer(conductor.ConductorContainerConfig{
 				Name:    instr.Container.Name,
 				Image:   instr.Container.Image,

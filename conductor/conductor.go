@@ -75,7 +75,7 @@ func (c *Conductor) RemoveContainer(id string) error {
 }
 
 func (c *Conductor) FindContainer(needle string) *ConductorContainer {
-	containers, _ := c.Client.ListContainers(docker.ListContainersOptions{All: false})
+	containers, _ := c.Client.ListContainers(docker.ListContainersOptions{All: true})
 	for _, container := range containers {
 		for _, name := range container.Names {
 			if name == "/"+needle {
