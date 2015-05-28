@@ -15,3 +15,5 @@
     image: private.registry.example.com/yourname/foobar_baz_image
     ports:
       999/tcp: 9999
+    environment:
+      - FOOBAR=baz

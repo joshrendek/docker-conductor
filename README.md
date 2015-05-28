@@ -22,6 +22,8 @@ Run `docker-conductor` inside a directory with a `conductor.yml` in it.
   container:
     name: running-container-name
     image: private.registry.example.com/yourname/your_image
+    environment:
+      - FOOBAR=baz
     ports:
       80/tcp: 8080
 
@@ -31,6 +33,8 @@ Run `docker-conductor` inside a directory with a `conductor.yml` in it.
   container:
     name: foobar-baz
     image: private.registry.example.com/yourname/foobar_baz_image
+    environment:
+      - FOOBAR=baz
     ports:
       999/tcp: 9999
 ```

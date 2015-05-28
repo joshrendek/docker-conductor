@@ -16,9 +16,10 @@ type ConductorContainer struct {
 }
 
 type ConductorContainerConfig struct {
-	Name    string
-	Image   string
-	PortMap map[string]string
+	Name        string
+	Image       string
+	PortMap     map[string]string
+	Environment []string
 }
 
 func (c *ConductorContainer) ID() string {
@@ -59,7 +60,7 @@ func (c *Conductor) CreateAndStartContainer(cfg ConductorContainerConfig) {
 
 	container, err := c.Client.CreateContainer(docker.CreateContainerOptions{
 		Name:       cfg.Name,
-		Config:     &docker.Config{Image: cfg.Image},
+		Config:     &docker.Config{Image: cfg.Image, Env: cfg.Environment},
 		HostConfig: hostConfig,
 	})
 

@@ -14,9 +14,10 @@ type ConductorDirections struct {
 }
 
 type ConductorDirectionsContainer struct {
-	Name  string
-	Image string
-	Ports map[string]string
+	Name        string
+	Image       string
+	Ports       map[string]string
+	Environment []string
 }
 
 func main() {
@@ -30,7 +31,6 @@ func main() {
 
 	for _, instr := range cd {
 		// fmt.Printf("--- m:\n%v\n\n", instr)
-
 		for _, host := range instr.Hosts {
 			docker_ctrl := conductor.New(host)
 			docker_ctrl.PullImage(instr.Container.Image + ":latest")
@@ -40,9 +40,10 @@ func main() {
 				panic(err)
 			}
 			docker_ctrl.CreateAndStartContainer(conductor.ConductorContainerConfig{
-				Name:    instr.Container.Name,
-				Image:   instr.Container.Image,
-				PortMap: instr.Container.Ports,
+				Name:        instr.Container.Name,
+				Image:       instr.Container.Image,
+				PortMap:     instr.Container.Ports,
+				Environment: instr.Container.Environment,
 			})
 		}
 
