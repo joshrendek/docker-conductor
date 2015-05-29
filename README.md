@@ -19,11 +19,11 @@ Flags:
 -p, --project="": Only run the instruction that are apart of this project
 ```
 
-## Only deploy `test_project`
+#### Only deploy `test_project`
 
 `docker-conductor -p test_project`
 
-## Only deploy the instruction named foobar
+#### Only deploy the instruction named foobar
 
 `docker-conductor -n foobar`
 
