@@ -15,7 +15,7 @@ Run `docker-conductor` inside a directory with a `conductor.yml` in it.
 Flags:
 
 ```
--n, --name="": Only run this name
+-n, --name="": Only run the instruction with this name
 ```
 
 # Example conductor.yml
@@ -34,6 +34,8 @@ Flags:
       80/tcp: 8080
     volumes:
       - /tmp:/tmp
+    dns:
+      - 8.8.8.8
 
 - name: Descriptive Service Name 2
   hosts:
@@ -41,12 +43,6 @@ Flags:
   container:
     name: foobar-baz
     image: private.registry.example.com/yourname/foobar_baz_image
-    environment:
-      - FOOBAR=baz
-    ports:
-      999/tcp: 9999
-    volumes:
-      - /tmp:/tmp
 ```
 
 # License

@@ -20,11 +20,12 @@ type ConductorDirectionsContainer struct {
 	Ports       map[string]string
 	Environment []string
 	Volumes     []string
+	Dns         []string
 }
 
 func main() {
 
-	var name *string = flag.StringP("name", "n", "", "Only run this name")
+	var name *string = flag.StringP("name", "n", "", "Only run the instruction with this name")
 	flag.Parse()
 
 	cd := []ConductorDirections{}
@@ -56,6 +57,7 @@ func main() {
 				PortMap:     instr.Container.Ports,
 				Environment: instr.Container.Environment,
 				Volumes:     instr.Container.Volumes,
+				Dns:         instr.Container.Dns,
 			})
 		}
 

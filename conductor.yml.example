@@ -19,3 +19,5 @@
       - FOOBAR=baz
     volumes:
       - /tmp:/tmp
+    dns:
+      - 8.8.8.8
