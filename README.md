@@ -1,6 +1,12 @@
 ![](https://github.com/joshrendek/docker-conductor/blob/master/logo.png)
 _Docker logo belongs to Docker Inc_
 
+### TODO
+
+* [ ] Health checks
+* [ ] TLS connections
+* [ ] Search/List containers for projects/hosts
+
 # docker-conductor
 A way to automate and orchestrate docker deployments
 
@@ -29,7 +35,16 @@ Flags:
 
 # Example conductor.yml
 
+If you want to use a library image, just specify library infront (check example below)
+
 ``` yaml
+
+- name: test redis
+  hosts:
+    - tcp://docker1.example.com:2375
+  container:
+    name: test-redis
+    image: library/redis
 
 - name: Descriptive Service Name
   project: test_project
