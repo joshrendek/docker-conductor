@@ -26,6 +26,8 @@ Run `docker-conductor` inside a directory with a `conductor.yml` in it.
       - FOOBAR=baz
     ports:
       80/tcp: 8080
+    volumes:
+      - /tmp:/tmp
 
 - name: Descriptive Service Name 2
   hosts:
@@ -37,6 +39,8 @@ Run `docker-conductor` inside a directory with a `conductor.yml` in it.
       - FOOBAR=baz
     ports:
       999/tcp: 9999
+    volumes:
+      - /tmp:/tmp
 ```
 
 # License

@@ -18,6 +18,7 @@ type ConductorDirectionsContainer struct {
 	Image       string
 	Ports       map[string]string
 	Environment []string
+	Volumes     []string
 }
 
 func main() {
@@ -44,6 +45,7 @@ func main() {
 				Image:       instr.Container.Image,
 				PortMap:     instr.Container.Ports,
 				Environment: instr.Container.Environment,
+				Volumes:     instr.Container.Volumes,
 			})
 		}
 

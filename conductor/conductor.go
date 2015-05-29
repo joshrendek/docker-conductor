@@ -20,6 +20,7 @@ type ConductorContainerConfig struct {
 	Image       string
 	PortMap     map[string]string
 	Environment []string
+	Volumes     []string
 }
 
 func (c *ConductorContainer) ID() string {
@@ -56,7 +57,7 @@ func (c *Conductor) CreateAndStartContainer(cfg ConductorContainerConfig) {
 		portBindings[docker.Port(k)] = []docker.PortBinding{{HostIP: "0.0.0.0", HostPort: v}}
 	}
 
-	hostConfig := &docker.HostConfig{PortBindings: portBindings}
+	hostConfig := &docker.HostConfig{PortBindings: portBindings, Binds: cfg.Volumes}
 
 	container, err := c.Client.CreateContainer(docker.CreateContainerOptions{
 		Name:       cfg.Name,

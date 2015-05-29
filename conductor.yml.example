@@ -17,3 +17,5 @@
       999/tcp: 9999
     environment:
       - FOOBAR=baz
+    volumes:
+      - /tmp:/tmp
