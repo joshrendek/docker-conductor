@@ -8,6 +8,7 @@
       80/tcp: 8080
 
 - name: Descriptive Service Name 2
+  project: test_project
   hosts:
     - tcp://docker1.example.com:2375
   container:

@@ -16,13 +16,23 @@ Flags:
 
 ```
 -n, --name="": Only run the instruction with this name
+-p, --project="": Only run the instruction that are apart of this project
 ```
+
+## Only deploy `test_project`
+
+`docker-conductor -p test_project`
+
+## Only deploy the instruction named foobar
+
+`docker-conductor -n foobar`
 
 # Example conductor.yml
 
 ``` yaml
 
 - name: Descriptive Service Name
+  project: test_project
   hosts:
     - tcp://docker1.example.com:2375
   container:

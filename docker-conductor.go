@@ -10,6 +10,7 @@ import (
 
 type ConductorDirections struct {
 	Name      string
+	Project   string
 	Hosts     []string
 	Container ConductorDirectionsContainer
 }
@@ -26,6 +27,7 @@ type ConductorDirectionsContainer struct {
 func main() {
 
 	var name *string = flag.StringP("name", "n", "", "Only run the instruction with this name")
+	var project *string = flag.StringP("project", "p", "", "Only run the instruction that are apart of this project")
 	flag.Parse()
 
 	cd := []ConductorDirections{}
@@ -39,6 +41,11 @@ func main() {
 	for _, instr := range cd {
 		if *name != "" {
 			if instr.Name != *name {
+				continue
+			}
+		}
+		if *project != "" {
+			if instr.Project != *project {
 				continue
 			}
 		}
