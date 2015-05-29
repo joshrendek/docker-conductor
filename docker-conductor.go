@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/joshrendek/docker-conductor/conductor"
+	flag "github.com/ogier/pflag"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
@@ -22,6 +23,10 @@ type ConductorDirectionsContainer struct {
 }
 
 func main() {
+
+	var name *string = flag.StringP("name", "n", "", "Only run this name")
+	flag.Parse()
+
 	cd := []ConductorDirections{}
 
 	data, _ := ioutil.ReadFile("conductor.yml")
@@ -31,6 +36,11 @@ func main() {
 	}
 
 	for _, instr := range cd {
+		if *name != "" {
+			if instr.Name != *name {
+				continue
+			}
+		}
 		// fmt.Printf("--- m:\n%v\n\n", instr)
 		for _, host := range instr.Hosts {
 			docker_ctrl := conductor.New(host)

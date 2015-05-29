@@ -12,6 +12,12 @@ A way to automate and orchestrate docker deployments
 
 Run `docker-conductor` inside a directory with a `conductor.yml` in it.
 
+Flags:
+
+```
+-n, --name="": Only run this name
+```
+
 # Example conductor.yml
 
 ``` yaml
