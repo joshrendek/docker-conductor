@@ -2,7 +2,6 @@ package conductor
 
 import (
 	"github.com/fsouza/go-dockerclient"
-	"os"
 	"strings"
 )
 
@@ -12,7 +11,7 @@ type Conductor struct {
 
 type ConductorContainer struct {
 	Conductor *Conductor
-	Container docker.APIContainers
+	Container *docker.Container
 }
 
 type ConductorContainerConfig struct {
@@ -33,7 +32,7 @@ func New(Host string) *Conductor {
 	return &Conductor{Client: client}
 }
 
-func (c *Conductor) PullImage(image string) {
+func (c *Conductor) PullImage(image string) string {
 	parsed := strings.Split(image, "/")
 	registry := parsed[0]
 	image_and_tag := strings.Join(parsed[1:], "")
@@ -41,13 +40,14 @@ func (c *Conductor) PullImage(image string) {
 	repository := parsed_image[0]
 	tag := parsed_image[1]
 	opts := docker.PullImageOptions{
-		Repository:   repository,
-		Registry:     registry,
-		Tag:          tag,
-		OutputStream: os.Stdout,
+		Repository: repository,
+		Registry:   registry,
+		Tag:        tag,
 	}
 
 	c.Client.PullImage(opts, docker.AuthConfiguration{})
+	latest_image, _ := c.Client.InspectImage(image)
+	return latest_image.ID
 }
 
 func (c *Conductor) CreateAndStartContainer(cfg ConductorContainerConfig) {
@@ -82,7 +82,8 @@ func (c *Conductor) FindContainer(needle string) *ConductorContainer {
 	for _, container := range containers {
 		for _, name := range container.Names {
 			if name == "/"+needle {
-				return &ConductorContainer{Conductor: c, Container: container}
+				real_container, _ := c.Client.InspectContainer(container.ID)
+				return &ConductorContainer{Conductor: c, Container: real_container}
 			}
 		}
 	}

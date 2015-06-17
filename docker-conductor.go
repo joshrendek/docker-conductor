@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/joshrendek/docker-conductor/conductor"
 	flag "github.com/ogier/pflag"
+	log "gopkg.in/inconshreveable/log15.v2"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
@@ -51,15 +51,28 @@ func main() {
 		}
 		// fmt.Printf("--- m:\n%v\n\n", instr)
 		for _, host := range instr.Hosts {
+
 			docker_ctrl := conductor.New(host)
-			docker_ctrl.PullImage(instr.Container.Image + ":latest")
 			container := docker_ctrl.FindContainer(instr.Container.Name)
-			fmt.Println("Container ID: " + container.ID())
+			host_log := log.New("\t\t\t\t[host]", host, "[container]", container.Container.Name)
+
+			host_log.Info("[ ] pulling image")
+			pulled_image := docker_ctrl.PullImage(instr.Container.Image + ":latest")
+			host_log.Info("[x] finished pulling image")
+			//log.Info("Container ID: " + container.ID())
+			//log.Info("Container image: " + container.Container.Image)
+
+			if pulled_image == container.Container.Image {
+				host_log.Info("skipping, container running latest image")
+				continue
+			}
+
 			if container.ID() != "" {
 				if err := docker_ctrl.RemoveContainer(container.ID()); err != nil {
-					panic(err)
+					host_log.Error(err.Error())
 				}
 			}
+			host_log.Info("[ ] creating container")
 			docker_ctrl.CreateAndStartContainer(conductor.ConductorContainerConfig{
 				Name:        instr.Container.Name,
 				Image:       instr.Container.Image,
@@ -68,6 +81,7 @@ func main() {
 				Volumes:     instr.Container.Volumes,
 				Dns:         instr.Container.Dns,
 			})
+			host_log.Info("[x] finished creating container")
 		}
 
 	}
