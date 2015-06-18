@@ -21,6 +21,7 @@ Run `docker-conductor` inside a directory with a `conductor.yml` in it.
 Flags:
 
 ```
+-f, --force=false: Force a redeploy of everything in the conductor.yml file
 -n, --name="": Only run the instruction with this name
 -p, --project="": Only run the instruction that are apart of this project
 ```

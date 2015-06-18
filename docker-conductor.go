@@ -28,6 +28,7 @@ func main() {
 
 	var name *string = flag.StringP("name", "n", "", "Only run the instruction with this name")
 	var project *string = flag.StringP("project", "p", "", "Only run the instruction that are apart of this project")
+	var force_deploy *bool = flag.BoolP("force", "f", false, "Force a redeploy of everything in the conductor.yml file")
 	flag.Parse()
 
 	cd := []ConductorDirections{}
@@ -54,7 +55,7 @@ func main() {
 
 			docker_ctrl := conductor.New(host)
 			container := docker_ctrl.FindContainer(instr.Container.Name)
-			host_log := log.New("\t\t\t\t[host]", host, "[container]", container.Container.Name)
+			host_log := log.New("\t\t\t\t[host]", host, "[container]", instr.Container.Name)
 
 			host_log.Info("[ ] pulling image")
 			pulled_image := docker_ctrl.PullImage(instr.Container.Image + ":latest")
@@ -62,16 +63,19 @@ func main() {
 			//log.Info("Container ID: " + container.ID())
 			//log.Info("Container image: " + container.Container.Image)
 
-			if pulled_image == container.Container.Image {
-				host_log.Info("skipping, container running latest image")
-				continue
-			}
+			if container.Container != nil {
+				if pulled_image == container.Container.Image && *force_deploy == false {
+					host_log.Info("skipping, container running latest image")
+					continue
+				}
 
-			if container.ID() != "" {
-				if err := docker_ctrl.RemoveContainer(container.ID()); err != nil {
-					host_log.Error(err.Error())
+				if container.ID() != "" {
+					if err := docker_ctrl.RemoveContainer(container.ID()); err != nil {
+						host_log.Error(err.Error())
+					}
 				}
 			}
+
 			host_log.Info("[ ] creating container")
 			docker_ctrl.CreateAndStartContainer(conductor.ConductorContainerConfig{
 				Name:        instr.Container.Name,
