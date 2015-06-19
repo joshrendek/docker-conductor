@@ -58,7 +58,9 @@ func (c *Conductor) CreateAndStartContainer(cfg ConductorContainerConfig) {
 		portBindings[docker.Port(k)] = []docker.PortBinding{{HostIP: "0.0.0.0", HostPort: v}}
 	}
 
-	hostConfig := &docker.HostConfig{PortBindings: portBindings, Binds: cfg.Volumes, DNS: cfg.Dns}
+	hostConfig := &docker.HostConfig{PortBindings: portBindings,
+		Binds: cfg.Volumes, DNS: cfg.Dns,
+		RestartPolicy: docker.AlwaysRestart()}
 
 	container, err := c.Client.CreateContainer(docker.CreateContainerOptions{
 		Name:       cfg.Name,
