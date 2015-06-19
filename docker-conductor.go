@@ -58,14 +58,15 @@ func main() {
 			host_log := log.New("\t\t\t\t[host]", host, "[container]", instr.Container.Name)
 
 			host_log.Info("[ ] pulling image")
-			pulled_image := docker_ctrl.PullImage(instr.Container.Image + ":latest")
+			pulled_image, err := docker_ctrl.PullImage(instr.Container.Image + ":latest")
+			if err != nil {
+				host_log.Error("Error pulling image: " + err.Error())
+			}
 			host_log.Info("[x] finished pulling image")
-			//log.Info("Container ID: " + container.ID())
-			//log.Info("Container image: " + container.Container.Image)
 
 			if container.Container != nil {
 				if pulled_image == container.Container.Image && *force_deploy == false {
-					host_log.Info("skipping, container running latest image")
+					host_log.Info("skipping, container running latest image : " + pulled_image)
 					continue
 				}
 

@@ -2,7 +2,7 @@ package conductor
 
 import (
 	"github.com/fsouza/go-dockerclient"
-	"strings"
+	//	"strings"
 )
 
 type Conductor struct {
@@ -32,26 +32,17 @@ func New(Host string) *Conductor {
 	return &Conductor{Client: client}
 }
 
-func (c *Conductor) PullImage(image string) string {
-	parsed := strings.Split(image, "/")
-	registry := parsed[0]
-	image_and_tag := strings.Join(parsed[1:], "")
-	parsed_image := strings.Split(image_and_tag, ":")
-	repository := parsed_image[0]
-	tag := parsed_image[1]
+func (c *Conductor) PullImage(image string) (string, error) {
 	opts := docker.PullImageOptions{
-		Repository: repository,
-		Registry:   registry,
-		Tag:        tag,
+		Repository:    image,
+		RawJSONStream: true,
 	}
-
-	c.Client.PullImage(opts, docker.AuthConfiguration{})
+	err := c.Client.PullImage(opts, docker.AuthConfiguration{})
 	latest_image, _ := c.Client.InspectImage(image)
-	return latest_image.ID
+	return latest_image.ID, err
 }
 
 func (c *Conductor) CreateAndStartContainer(cfg ConductorContainerConfig) {
-
 	portBindings := map[docker.Port][]docker.PortBinding{}
 
 	for k, v := range cfg.PortMap {
