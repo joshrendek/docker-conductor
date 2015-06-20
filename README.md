@@ -3,7 +3,7 @@ _Docker logo belongs to Docker Inc_
 
 ### TODO
 
-* [ ] Health checks
+* [x] Health checks
 * [ ] TLS connections
 * [ ] Search/List containers for projects/hosts
 
@@ -26,6 +26,14 @@ Flags:
 -p, --project="": Only run the instruction that are apart of this project
 ```
 
+#### Healthchecks
+
+You can either run a healthcheck as a command and conductor will replace any instances of `$HOST` with the host or ip.
+
+Or you can run a healthcheck that is a script, for example: `./some_script.sh` - the host will be available as a `$HOST` environment parameter.
+
+If scripts do not `exit 0`, the health check will fail, the reason and output of the script will print to `STDOUT`.
+
 #### Only deploy `test_project`
 
 `docker-conductor -p test_project`
@@ -41,6 +49,7 @@ If you want to use a library image, just specify library infront (check example 
 ``` yaml
 
 - name: test redis
+  healthcheck: curl $HOST
   hosts:
     - tcp://docker1.example.com:2375
   container:
@@ -48,6 +57,7 @@ If you want to use a library image, just specify library infront (check example 
     image: library/redis
 
 - name: Descriptive Service Name
+  healthcheck: ./some_script.sh
   project: test_project
   hosts:
     - tcp://docker1.example.com:2375

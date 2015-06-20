@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/joshrendek/docker-conductor/conductor"
+	"github.com/joshrendek/docker-conductor/healthcheck"
 	flag "github.com/ogier/pflag"
 	log "gopkg.in/inconshreveable/log15.v2"
 	"gopkg.in/yaml.v2"
@@ -9,10 +10,11 @@ import (
 )
 
 type ConductorDirections struct {
-	Name      string
-	Project   string
-	Hosts     []string
-	Container ConductorDirectionsContainer
+	Name        string
+	Healthcheck string
+	Project     string
+	Hosts       []string
+	Container   ConductorDirectionsContainer
 }
 
 type ConductorDirectionsContainer struct {
@@ -56,6 +58,11 @@ func main() {
 			docker_ctrl := conductor.New(host)
 			container := docker_ctrl.FindContainer(instr.Container.Name)
 			host_log := log.New("\t\t\t\t[host]", host, "[container]", instr.Container.Name)
+
+			if instr.Healthcheck != "" {
+				health := healthcheck.New(host_log, instr.Healthcheck, host)
+				health.Check()
+			}
 
 			host_log.Info("[ ] pulling image")
 			pulled_image, err := docker_ctrl.PullImage(instr.Container.Image + ":latest")
