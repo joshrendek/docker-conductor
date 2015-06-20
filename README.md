@@ -30,7 +30,7 @@ Flags:
 
 You can either run a healthcheck as a command and conductor will replace any instances of `$HOST` with the host or ip.
 
-Or you can run a healthcheck that is a script, for example: `./some_script.sh` - the host will be available as a `$HOST` environment parameter.
+Or you can run a healthcheck that is a script, for example: `./some_script.sh` - the host will be available as a `$HOST` environment variable.
 
 If scripts do not `exit 0`, the health check will fail, the reason and output of the script will print to `STDOUT`.
 
