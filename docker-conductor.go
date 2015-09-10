@@ -25,6 +25,7 @@ type ConductorDirectionsContainer struct {
 	Environment []string
 	Volumes     []string
 	Dns         []string
+	Entrypoint  string
 }
 
 func main() {
@@ -108,7 +109,7 @@ func main() {
 				Dns:         instr.Container.Dns,
 			}
 			if instr.Container.Entrypoint != "" {
-				conductor_config = instr.Container.Entrypoint
+				conductor_config.Entrypoint = instr.Container.Entrypoint
 			}
 			docker_ctrl.CreateAndStartContainer(conductor_config)
 			host_log.Info("[x] finished creating container")
