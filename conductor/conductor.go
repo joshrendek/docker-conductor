@@ -21,6 +21,7 @@ type ConductorContainerConfig struct {
 	Environment []string
 	Volumes     []string
 	Dns         []string
+	Entrypoint  string
 }
 
 func (c *ConductorContainer) ID() string {
@@ -53,9 +54,15 @@ func (c *Conductor) CreateAndStartContainer(cfg ConductorContainerConfig) {
 		Binds: cfg.Volumes, DNS: cfg.Dns,
 		RestartPolicy: docker.AlwaysRestart()}
 
+	docker_config := &docker.Config{Image: cfg.Image, Env: cfg.Environment}
+
+	if cfg.Entrypoint != "" {
+		docker_config.Entrypoint = []String{cfg.Entrypoint}
+	}
+
 	container, err := c.Client.CreateContainer(docker.CreateContainerOptions{
 		Name:       cfg.Name,
-		Config:     &docker.Config{Image: cfg.Image, Env: cfg.Environment},
+		Config:     docker_config,
 		HostConfig: hostConfig,
 	})
 

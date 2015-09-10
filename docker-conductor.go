@@ -20,6 +20,7 @@ type ConductorDirections struct {
 type ConductorDirectionsContainer struct {
 	Name        string
 	Image       string
+	Tag         string
 	Ports       map[string]string
 	Environment []string
 	Volumes     []string
@@ -59,25 +60,38 @@ func main() {
 			container := docker_ctrl.FindContainer(instr.Container.Name)
 			host_log := log.New("\t\t\t\t[host]", host, "[container]", instr.Container.Name)
 
+			health_passed := false
+
 			if instr.Healthcheck != "" {
 				health := healthcheck.New(host_log, instr.Healthcheck, host)
-				health.Check()
+				health_passed = health.Check()
+			}
+
+			tag := "latest"
+			if instr.Container.Tag != "" {
+				tag = instr.Container.Tag
 			}
 
 			host_log.Info("[ ] pulling image")
-			pulled_image, err := docker_ctrl.PullImage(instr.Container.Image + ":latest")
+			pulled_image, err := docker_ctrl.PullImage(instr.Container.Image + ":" + tag)
 			if err != nil {
 				host_log.Error("Error pulling image: " + err.Error())
 			}
 			host_log.Info("[x] finished pulling image")
 
 			if container.Container != nil {
-				if pulled_image == container.Container.Image && *force_deploy == false {
+				containerShouldStart := health_passed == false && instr.Healthcheck != ""
+				if containerShouldStart == false && pulled_image == container.Container.Image && *force_deploy == false {
 					host_log.Info("skipping, container running latest image : " + pulled_image)
 					continue
 				}
 
-				if container.ID() != "" {
+				if containerShouldStart {
+					host_log.Info("[*] Attempting to start container, Healthcheck failed")
+				}
+
+				if container.ID() != "" || containerShouldStart {
+					host_log.Info("[*] Removing container")
 					if err := docker_ctrl.RemoveContainer(container.ID()); err != nil {
 						host_log.Error(err.Error())
 					}
@@ -85,14 +99,18 @@ func main() {
 			}
 
 			host_log.Info("[ ] creating container")
-			docker_ctrl.CreateAndStartContainer(conductor.ConductorContainerConfig{
+			conductor_config := conductor.ConductorContainerConfig{
 				Name:        instr.Container.Name,
-				Image:       instr.Container.Image,
+				Image:       instr.Container.Image + ":" + tag,
 				PortMap:     instr.Container.Ports,
 				Environment: instr.Container.Environment,
 				Volumes:     instr.Container.Volumes,
 				Dns:         instr.Container.Dns,
-			})
+			}
+			if instr.Container.Entrypoint != "" {
+				conductor_config = instr.Container.Entrypoint
+			}
+			docker_ctrl.CreateAndStartContainer(conductor_config)
 			host_log.Info("[x] finished creating container")
 		}
 

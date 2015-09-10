@@ -5,6 +5,8 @@
   container:
     name: running-container-name
     image: private.registry.example.com/yourname/your_image
+    tag: 3.5 # (optional) defaults to latest
+    entrypoint: foobar # (optional)
     ports:
       80/tcp: 8080
 

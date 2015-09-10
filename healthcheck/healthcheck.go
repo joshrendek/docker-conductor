@@ -19,7 +19,7 @@ func New(l log.Logger, script string, host string) *HealthCheck {
 	return &HealthCheck{Log: l, Script: script, Host: ip_host}
 }
 
-func (h *HealthCheck) Check() {
+func (h *HealthCheck) Check() bool {
 	script := strings.Split(h.Script, " ")
 	for i, p := range script {
 		if p == "$HOST" {
@@ -34,7 +34,9 @@ func (h *HealthCheck) Check() {
 		h.Log.Error("[F] Health check failed")
 		h.Log.Error(err.Error())
 		h.Log.Error(string(out))
+		return false
 	} else {
 		h.Log.Info("[P] Health check passed")
+		return true
 	}
 }
