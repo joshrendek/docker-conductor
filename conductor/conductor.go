@@ -57,7 +57,7 @@ func (c *Conductor) CreateAndStartContainer(cfg ConductorContainerConfig) {
 	docker_config := &docker.Config{Image: cfg.Image, Env: cfg.Environment}
 
 	if cfg.Entrypoint != "" {
-		docker_config.Entrypoint = []String{cfg.Entrypoint}
+		docker_config.Entrypoint = []string{cfg.Entrypoint}
 	}
 
 	container, err := c.Client.CreateContainer(docker.CreateContainerOptions{
